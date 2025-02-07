@@ -13,7 +13,7 @@ function SessionStopped({ startSession }) {
   }
 
   return (
-    <div className="flex items-center justify-center w-full h-full">
+    <div className="flex items-center justify-center w-full h-full mt-4">
       <Button
         onClick={handleStartSession}
         className={isActivating ? "bg-gray-600" : "bg-red-600"}
@@ -25,7 +25,7 @@ function SessionStopped({ startSession }) {
   );
 }
 
-function SessionActive({ stopSession, sendTextMessage }) {
+function SessionActive({ stopSession, sendTextMessage, handlePushToTalk }) {
   const [message, setMessage] = useState("");
 
   function handleSendClientEvent() {
@@ -34,33 +34,44 @@ function SessionActive({ stopSession, sendTextMessage }) {
   }
 
   return (
-    <div className="flex items-center justify-center w-full h-full gap-4">
-      <input
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && message.trim()) {
-            handleSendClientEvent();
-          }
-        }}
-        type="text"
-        placeholder="send a text message..."
-        className="border border-gray-200 rounded-full p-4 flex-1"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-      />
-      <Button
-        onClick={() => {
-          if (message.trim()) {
-            handleSendClientEvent();
-          }
-        }}
-        icon={<MessageSquare height={16} />}
-        className="bg-blue-400"
-      >
-        send text
-      </Button>
-      <Button onClick={stopSession} icon={<CloudOff height={16} />}>
-        disconnect
-      </Button>
+    <div className="flex flex-col items-center justify-center w-full h-full mt-4">
+      <div className="flex items-center justify-center w-full gap-4">
+        <input
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && message.trim()) {
+              handleSendClientEvent();
+            }
+          }}
+          type="text"
+          placeholder="send a text message..."
+          className="border border-gray-200 rounded-full p-4 flex-1"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+        <Button
+          onClick={() => {
+            if (message.trim()) {
+              handleSendClientEvent();
+            }
+          }}
+          icon={<MessageSquare height={16} />}
+          className="bg-blue-400"
+        >
+          send text
+        </Button>
+        <Button onClick={stopSession} icon={<CloudOff height={16} />}>
+          disconnect
+        </Button>
+      </div>
+      <div className="mt-4 w-full">
+        <Button
+          onMouseDown={() => handlePushToTalk(true)}
+          onMouseUp={() => handlePushToTalk(false)}
+          className="w-full bg-green-500 flex items-center justify-center"
+          >
+          Push To Talk
+        </Button>
+      </div>
     </div>
   );
 }
@@ -70,6 +81,7 @@ export default function SessionControls({
   stopSession,
   sendClientEvent,
   sendTextMessage,
+  handlePushToTalk,
   serverEvents,
   isSessionActive,
 }) {
@@ -80,6 +92,7 @@ export default function SessionControls({
           stopSession={stopSession}
           sendClientEvent={sendClientEvent}
           sendTextMessage={sendTextMessage}
+          handlePushToTalk={handlePushToTalk}
           serverEvents={serverEvents}
         />
       ) : (

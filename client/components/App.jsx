@@ -10,6 +10,7 @@ export default function App() {
   const [dataChannel, setDataChannel] = useState(null);
   const peerConnection = useRef(null);
   const audioElement = useRef(null);
+  const microphoneStream = useRef(null);
 
   async function startSession() {
     // Get an ephemeral key from the Fastify server
@@ -29,7 +30,9 @@ export default function App() {
     const ms = await navigator.mediaDevices.getUserMedia({
       audio: true,
     });
-    pc.addTrack(ms.getTracks()[0]);
+    microphoneStream.current = ms.getAudioTracks()[0];
+    microphoneStream.current.enabled = false;
+    pc.addTrack(microphoneStream.current);
 
     // Set up data channel for sending and receiving events
     const dc = pc.createDataChannel("oai-events");
@@ -77,7 +80,9 @@ export default function App() {
   function sendClientEvent(message) {
     if (dataChannel) {
       message.event_id = message.event_id || crypto.randomUUID();
-      dataChannel.send(JSON.stringify(message));
+      const data = JSON.stringify(message);
+      console.log(`sendClientEvent("${data}")`);
+      dataChannel.send(data);
       setEvents((prev) => [message, ...prev]);
     } else {
       console.error(
@@ -85,6 +90,23 @@ export default function App() {
         message,
       );
     }
+  }
+
+  function sendResponseCreate(responseConfig) {
+    sendClientEvent({ 
+      type: "response.create",
+      response: responseConfig
+    });
+  }
+
+  function sendSessionUpdate(sessionConfig) {
+    const event = {
+      type: "session.update",
+      session: { 
+        ...sessionConfig
+      }
+    };
+    sendClientEvent(event);
   }
 
   // Send a text message to the model
@@ -104,7 +126,21 @@ export default function App() {
     };
 
     sendClientEvent(event);
-    sendClientEvent({ type: "response.create" });
+    sendResponseCreate();
+  }
+
+  function handlePushToTalk(enable) {
+    console.log(`handlePushToTalk(enable=${enable})`);
+    if (enable) {
+      // TODO: Mute audioElement.current...
+      // TODO: Send interrupt... (requires tracking any incoming current response)
+      sendClientEvent({type: 'input_audio_buffer.clear'});
+      microphoneStream.current.enabled = true;
+    } else {
+      microphoneStream.current.enabled = false;
+      sendClientEvent({type: 'input_audio_buffer.commit'});
+      sendResponseCreate();
+    }
   }
 
   // Attach event listeners to the data channel when a new one is created
@@ -122,6 +158,16 @@ export default function App() {
       });
     }
   }, [dataChannel]);
+
+  useEffect(() => {
+    if (isSessionActive) {
+      console.log("Disabling turn detection");
+      sendSessionUpdate({
+        voice: "ash",
+        turn_detection: null,
+      });
+    }
+  }, [isSessionActive]);
 
   return (
     <>
@@ -142,6 +188,7 @@ export default function App() {
               stopSession={stopSession}
               sendClientEvent={sendClientEvent}
               sendTextMessage={sendTextMessage}
+              handlePushToTalk={handlePushToTalk}
               events={events}
               isSessionActive={isSessionActive}
             />
