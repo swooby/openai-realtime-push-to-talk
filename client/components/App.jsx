@@ -5,6 +5,7 @@ import SessionControls from "./SessionControls";
 import ToolPanel from "./ToolPanel";
 
 export default function App() {
+  const [showToolPanel, setShowToolPanel] = useState(false);
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [events, setEvents] = useState([]);
   const [dataChannel, setDataChannel] = useState(null);
@@ -170,19 +171,61 @@ export default function App() {
   }, [isSessionActive]);
 
   return (
-    <>
-      <nav className="absolute top-0 left-0 right-0 h-16 flex items-center">
-        <div className="flex items-center gap-4 w-full m-4 pb-2 border-0 border-b border-solid border-gray-200">
-          <img style={{ width: "24px" }} src={logo} />
-          <h1>realtime console</h1>
-        </div>
+    <div className="flex flex-col h-screen">
+      {/* Header */}
+      <nav className="h-16 flex items-center border-b border-gray-200 px-4">
+        <img src={logo} alt="Logo" style={{ width: "24px" }} />
+        <h1 className="ml-4">realtime console</h1>
+        {/* Toggle Tool Panel Chevron */}
+        <button
+          onClick={() => setShowToolPanel((prev) => !prev)}
+          className="ml-auto p-2 border border-gray-300 rounded hover:bg-gray-100 focus:outline-none"
+          aria-label={showToolPanel ? "Hide Tool Panel" : "Show Tool Panel"}
+        >
+          {showToolPanel ? (
+            // When the panel is visible, show a chevron that points to the right.
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          ) : (
+            // When the panel is hidden, show a chevron that points to the left.
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          )}
+        </button>
       </nav>
-      <main className="absolute top-16 left-0 right-0 bottom-0">
-        <section className="absolute top-0 left-0 right-[380px] bottom-0 flex">
-          <section className="absolute top-0 left-0 right-0 bottom-32 px-4 overflow-y-auto">
+
+      {/* Main Content */}
+      <main className="flex flex-1 overflow-hidden">
+        {/* Left Section: Event Log and Session Controls */}
+        <section className="flex flex-col flex-1">
+          <div className="flex-1 overflow-y-auto px-4">
             <EventLog events={events} />
-          </section>
-          <section className="absolute h-32 left-0 right-0 bottom-0 p-4">
+          </div>
+          <div className="p-4">
             <SessionControls
               startSession={startSession}
               stopSession={stopSession}
@@ -192,17 +235,21 @@ export default function App() {
               events={events}
               isSessionActive={isSessionActive}
             />
+          </div>
+        </section>
+
+        {/* Right Section: ToolPanel (conditionally rendered) */}
+        {showToolPanel && (
+          <section className="w-96 p-4 overflow-y-auto border-l border-gray-200">
+            <ToolPanel
+              sendClientEvent={sendClientEvent}
+              sendResponseCreate={sendResponseCreate}
+              events={events}
+              isSessionActive={isSessionActive}
+            />
           </section>
-        </section>
-        <section className="absolute top-0 w-[380px] right-0 bottom-0 p-4 pt-0 overflow-y-auto">
-          <ToolPanel
-            sendClientEvent={sendClientEvent}
-            sendTextMessage={sendTextMessage}
-            events={events}
-            isSessionActive={isSessionActive}
-          />
-        </section>
+        )}
       </main>
-    </>
+    </div>
   );
 }

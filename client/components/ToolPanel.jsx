@@ -66,6 +66,7 @@ function FunctionCallOutput({ functionCallOutput }) {
 export default function ToolPanel({
   isSessionActive,
   sendClientEvent,
+  sendResponseCreate,
   events,
 }) {
   const [functionAdded, setFunctionAdded] = useState(false);
@@ -92,14 +93,11 @@ export default function ToolPanel({
         ) {
           setFunctionCallOutput(output);
           setTimeout(() => {
-            sendClientEvent({
-              type: "response.create",
-              response: {
-                instructions: `
-                ask for feedback about the color palette - don't repeat 
-                the colors, just ask if they like the colors.
-              `,
-              },
+            sendResponseCreate({
+              instructions: `
+              ask for feedback about the color palette - don't repeat 
+              the colors, just ask if they like the colors.
+            `,
             });
           }, 500);
         }
