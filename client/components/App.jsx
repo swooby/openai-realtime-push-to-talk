@@ -14,8 +14,12 @@ export default function App() {
   const microphoneStream = useRef(null);
 
   async function startSession() {
+    const model = "gpt-4o-mini-realtime-preview";
+    const voice = "ash"; // alloy, ash, coral, echo, fable, onyx, nova, sage, or shimmer
+
     // Get an ephemeral key from the Fastify server
-    const tokenResponse = await fetch("/token");
+    const params = new URLSearchParams({ model, voice });
+    const tokenResponse = await fetch(`/token?${params.toString()}`);
     const data = await tokenResponse.json();
     const EPHEMERAL_KEY = data.client_secret.value;
 
@@ -44,7 +48,6 @@ export default function App() {
     await pc.setLocalDescription(offer);
 
     const baseUrl = "https://api.openai.com/v1/realtime";
-    const model = "gpt-4o-realtime-preview-2024-12-17";
     const sdpResponse = await fetch(`${baseUrl}?model=${model}`, {
       method: "POST",
       body: offer.sdp,

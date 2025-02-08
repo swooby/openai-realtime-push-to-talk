@@ -32,6 +32,12 @@ await server.vite.ready();
 
 // Server-side API route to return an ephemeral realtime session token
 server.get("/token", async () => {
+  const { model, voice } = request.query;
+
+  // Optionally provide default values if parameters are missing
+  const sessionModel = model || "gpt-4o-mini-realtime-preview";
+  const sessionVoice = voice || "ash"; // alloy, ash, coral, echo, fable, onyx, nova, sage, or shimmer
+
   const r = await fetch("https://api.openai.com/v1/realtime/sessions", {
     method: "POST",
     headers: {
@@ -39,8 +45,8 @@ server.get("/token", async () => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "gpt-4o-realtime-preview-2024-12-17",
-      voice: "verse",
+      model: sessionModel,
+      voice: sessionVoice,
     }),
   });
 
