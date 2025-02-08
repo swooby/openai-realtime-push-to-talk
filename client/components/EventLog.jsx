@@ -13,9 +13,9 @@ function Event({ event, timestamp }) {
         onClick={() => setIsExpanded(!isExpanded)}
       >
         {isClient ? (
-          <ArrowDown className="text-blue-400" />
-        ) : (
           <ArrowUp className="text-green-400" />
+        ) : (
+          <ArrowDown className="text-blue-400" />
         )}
         <div className="text-sm text-gray-500">
           {isClient ? "client:" : "server:"}
