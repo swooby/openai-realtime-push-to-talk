@@ -6,8 +6,10 @@ function Event({ event, timestamp }) {
 
   const isClient = event.event_id && !event.event_id.startsWith("event_");
 
+  const isError = event.error || event.error_message;
+
   return (
-    <div className="flex flex-col gap-2 p-2 rounded-md bg-gray-50">
+    <div className={`flex flex-col gap-2 p-2 rounded-md ${isError ? "bg-yellow-100" : "bg-gray-50"}`}>
       <div
         className="flex items-center gap-2 cursor-pointer"
         onClick={() => setIsExpanded(!isExpanded)}
@@ -27,7 +29,7 @@ function Event({ event, timestamp }) {
           isExpanded ? "block" : "hidden"
         }`}
       >
-        <pre className="text-xs">{JSON.stringify(event, null, 2)}</pre>
+        <pre className="text-xs whitespace-pre-wrap">{JSON.stringify(event, null, 2)}</pre>
       </div>
     </div>
   );

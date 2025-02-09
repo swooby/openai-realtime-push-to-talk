@@ -189,6 +189,11 @@ export default function App() {
         setIsSessionActive(true);
         setEvents([]);
       });
+
+      dataChannel.addEventListener('close', () => {
+        console.warn('Data channel closed');
+        stopSession();
+      });
     }
   }, [dataChannel]);
 
