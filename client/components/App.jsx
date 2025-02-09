@@ -238,6 +238,11 @@ export default function App() {
       }
     }  
     
+    // This is simple and "works", but this is not very efficient for large collections.
+    // This "insert at head" involves copying the entire array each time.
+    // One option is to insert at the end (which requires no array copy),
+    // and then have EventLog reverse the order of the events when rendering.
+    // Another option is to use a virtualized list library like react-window or react-virtualized.
     setEvents((prev) => [event, ...prev]);
   }
 

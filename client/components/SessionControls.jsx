@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CloudLightning, CloudOff, MessageSquare } from "react-feather";
 import Button from "./Button";
 
@@ -27,6 +27,13 @@ function SessionStopped({ startSession }) {
 
 function SessionActive({ stopSession, sendTextMessage, pushToTalk, interruptAssistant }) {
   const [message, setMessage] = useState("");
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   function handleSendClientEvent() {
     sendTextMessage(message);
@@ -37,6 +44,7 @@ function SessionActive({ stopSession, sendTextMessage, pushToTalk, interruptAssi
     <div className="flex flex-col items-center justify-center w-full h-full mt-4">
       <div className="flex items-center justify-center w-full gap-4">
         <input
+          ref={inputRef}
           onKeyDown={(e) => {
             if (e.key === "Enter" && message.trim()) {
               handleSendClientEvent();
