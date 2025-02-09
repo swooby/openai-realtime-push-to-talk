@@ -1,6 +1,9 @@
 # OpenAI Realtime Console Push-To-Talk (PTT)
 
-**NOTE: This fork was created on 2025/02/07 and is a work in progress for a Push-To-Talk specific demo/test interface to the OpenAI Realtime API.**
+Deployed to:  
+https://swooby.github.io/openai-realtime-push-to-talk/
+
+**This fork was created on 2025/02/07 and is a work in progress for a Push-To-Talk specific demo/test interface to the OpenAI Realtime API.**
 
 This is an example application showing how to use the [OpenAI Realtime API](https://platform.openai.com/docs/guides/realtime) with [WebRTC](https://platform.openai.com/docs/guides/realtime-webrtc).
 

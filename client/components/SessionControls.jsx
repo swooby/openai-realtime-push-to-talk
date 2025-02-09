@@ -37,7 +37,7 @@ function SessionStopped({ startSession }) {
           placeholder="!!KEEP YOUR OPEN AI API KEY SECRET!!"
           value={dangerousApiKey}
           onChange={(e) => setDangerousApiKey(e.target.value)}
-          className="w-full border border-gray-300 rounded p-3"
+          className="w-full border border-gray-300 rounded-sm p-3"
         />
         <Button
           onClick={handleStartSession}
@@ -50,7 +50,7 @@ function SessionStopped({ startSession }) {
       {showMore && (
         <div className="">
           <b>You must provide <i>your own</i> OpenAI API Key to connect to OpenAI's Realtime API with.</b><br/>
-          This <a href="https://github.com/swooby/openai-realtime-push-to-talk/" target="_blank" rel="noopener noreferrer" className="underline">[open source]</a> app <b>only ever sends this value directly to https://api.openai.com</b>.<br/>
+          This <a href="https://github.com/swooby/openai-realtime-push-to-talk/blob/main/client/components/App.jsx#L18-L40" target="_blank" rel="noopener noreferrer" className="underline">[open source]</a> app <b>only ever sends this value directly to https://api.openai.com</b>.<br/>
           If you don't already have an OpenAI API key:
           <ol className="list-decimal list-inside ml-4">
             <li>

@@ -291,12 +291,12 @@ export default function App() {
       {/* Header */}
       <nav className="h-16 flex items-center border-b border-gray-200 px-4">
         <img src={logo} alt="Logo" style={{ width: "24px" }} />
-        <h1 className="ml-4">realtime console</h1>
+        <h1 className="ml-4">realtime console (2025.02.09-16:10)</h1>
         <div className="ml-auto flex items-center gap-2">
           <button
             onClick={() => setEvents([])}
             disabled={events.length === 0}
-            className={`p-2 border border-gray-300 rounded focus:outline-none ${
+            className={`p-2 border border-gray-300 rounded focus:outline-hidden ${
               events.length === 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"
             }`}
           >
@@ -304,7 +304,7 @@ export default function App() {
           </button>
           <button
             onClick={() => setShowToolPanel((prev) => !prev)}
-            className="flex items-center gap-2 flex-nowrap p-2 border border-gray-300 rounded hover:bg-gray-100 focus:outline-none"
+            className="flex items-center gap-2 flex-nowrap p-2 border border-gray-300 rounded-sm hover:bg-gray-100 focus:outline-hidden"
             aria-label={showToolPanel ? "Hide Tool Panel" : "Show Tool Panel"}
           >
             <span>Tools/Functions</span>
