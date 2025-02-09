@@ -25,7 +25,7 @@ function SessionStopped({ startSession }) {
   );
 }
 
-function SessionActive({ stopSession, sendTextMessage, handlePushToTalk }) {
+function SessionActive({ stopSession, sendTextMessage, pushToTalk, interruptAssistant }) {
   const [message, setMessage] = useState("");
 
   function handleSendClientEvent() {
@@ -63,13 +63,19 @@ function SessionActive({ stopSession, sendTextMessage, handlePushToTalk }) {
           disconnect
         </Button>
       </div>
-      <div className="mt-4 w-full">
+      <div className="mt-4 w-full flex gap-4">
         <Button
-          onMouseDown={() => handlePushToTalk(true)}
-          onMouseUp={() => handlePushToTalk(false)}
-          className="w-full bg-green-500 flex items-center justify-center"
-          >
+          onMouseDown={() => pushToTalk(true)}
+          onMouseUp={() => pushToTalk(false)}
+          className="bg-green-500 w-full flex items-center justify-center"
+        >
           Push To Talk
+        </Button>
+        <Button
+          onClick={interruptAssistant}
+          className="bg-red-500 flex items-center justify-center px-8 whitespace-nowrap"
+        >
+          Stop/Interrupt/Truncate Assistant
         </Button>
       </div>
     </div>
@@ -81,7 +87,8 @@ export default function SessionControls({
   stopSession,
   sendClientEvent,
   sendTextMessage,
-  handlePushToTalk,
+  pushToTalk,
+  interruptAssistant,
   serverEvents,
   isSessionActive,
 }) {
@@ -92,7 +99,8 @@ export default function SessionControls({
           stopSession={stopSession}
           sendClientEvent={sendClientEvent}
           sendTextMessage={sendTextMessage}
-          handlePushToTalk={handlePushToTalk}
+          pushToTalk={pushToTalk}
+          interruptAssistant={interruptAssistant}
           serverEvents={serverEvents}
         />
       ) : (

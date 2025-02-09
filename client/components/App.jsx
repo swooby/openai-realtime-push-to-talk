@@ -13,6 +13,8 @@ export default function App() {
   const audioElement = useRef(null);
   const microphoneStream = useRef(null);
 
+  const currentAssistantConversationRef = useRef(null);
+
   async function startSession() {
     const model = "gpt-4o-mini-realtime-preview";
     const voice = "ash"; // alloy, ash, coral, echo, fable, onyx, nova, sage, or shimmer
@@ -77,6 +79,7 @@ export default function App() {
 
     setIsSessionActive(false);
     setDataChannel(null);
+    updateCurrentAssistantConversation(null);
     peerConnection.current = null;
   }
 
@@ -100,6 +103,13 @@ export default function App() {
     sendClientEvent({ 
       type: "response.create",
       response: responseConfig
+    });
+  }
+
+  function sendResponseCancel(responseId) {
+    sendClientEvent({ 
+      type: "response.cancel",
+      response_id: responseId
     });
   }
 
@@ -128,16 +138,15 @@ export default function App() {
         ],
       },
     };
-
     sendClientEvent(event);
     sendResponseCreate();
   }
 
-  function handlePushToTalk(enable) {
-    console.log(`handlePushToTalk(enable=${enable})`);
+  function pushToTalk(enable) {
+    console.log(`pushToTalk(enable=${enable})`);
     if (enable) {
-      // TODO: Mute audioElement.current...
-      // TODO: Send interrupt... (requires tracking any incoming current response)
+      muteSpeaker();
+      interruptAssistant();
       sendClientEvent({type: 'input_audio_buffer.clear'});
       microphoneStream.current.enabled = true;
     } else {
@@ -147,21 +156,85 @@ export default function App() {
     }
   }
 
+  function muteSpeaker() {
+    console.log("TODO: Mute audioElement.current...");
+    //...
+  }
+
+  function interruptAssistant() {
+    sendResponseCancel();
+    const currentAssistantConversation = currentAssistantConversationRef.current; 
+    if (currentAssistantConversation) {
+      const elapsedMillis = Date.now() - currentAssistantConversation.startTime;
+      const item = currentAssistantConversation.item;
+      const event = {
+        type: "conversation.item.truncate",
+        item_id: item.id,
+        content_index: 0, // TODO: content.length,
+        audio_end_ms: elapsedMillis,
+      };
+      sendClientEvent(event);
+    }
+  }
+
   // Attach event listeners to the data channel when a new one is created
   useEffect(() => {
     if (dataChannel) {
       // Append new server events to the list
-      dataChannel.addEventListener("message", (e) => {
-        setEvents((prev) => [JSON.parse(e.data), ...prev]);
-      });
+      dataChannel.addEventListener("message", handleMessage);
 
       // Set session active when the data channel is opened
       dataChannel.addEventListener("open", () => {
+        console.info('Data channel opened');
         setIsSessionActive(true);
         setEvents([]);
       });
     }
   }, [dataChannel]);
+
+  function handleMessage(e) {
+    const event = JSON.parse(e.data);
+    switch (event.type) {
+      case "error":
+        console.error("error:", event);
+        break;
+      default:
+        if (false) {
+          console.log(`message:`, event);
+        }
+        break;
+    }
+
+    switch (event.type) {
+      case "response.output_item.added": {
+        const item = event.item;
+        if (item.role === "assistant") {
+          let currentAssistantConversation = currentAssistantConversationRef.current;
+          if (item.id !== currentAssistantConversation?.item.id) {
+            currentAssistantConversation = {
+              item,
+              startTime: new Date(),
+            };
+            currentAssistantConversationRef.current = currentAssistantConversation;
+            console.log(`handleEvent: "response.output_item.added": Set currentAssistantConversation=${JSON.stringify(currentAssistantConversation)}`);
+          }
+        }
+        break;
+      }
+      case "response.output_item.done": {
+        const item = event.item;
+        if (item.role === "assistant") {
+          const currentAssistantConversation = currentAssistantConversationRef.current;
+          if (item.id === currentAssistantConversation?.item.id) {
+            currentAssistantConversationRef.current = null;
+            console.log(`handleEvent: "response.output_item.done": Set currentAssistantConversation=null`);
+          }
+        }
+      }
+    }  
+    
+    setEvents((prev) => [event, ...prev]);
+  }
 
   useEffect(() => {
     if (isSessionActive) {
@@ -234,7 +307,8 @@ export default function App() {
               stopSession={stopSession}
               sendClientEvent={sendClientEvent}
               sendTextMessage={sendTextMessage}
-              handlePushToTalk={handlePushToTalk}
+              pushToTalk={pushToTalk}
+              interruptAssistant={interruptAssistant}
               events={events}
               isSessionActive={isSessionActive}
             />
