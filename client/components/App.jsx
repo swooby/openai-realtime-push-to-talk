@@ -252,46 +252,57 @@ export default function App() {
       <nav className="h-16 flex items-center border-b border-gray-200 px-4">
         <img src={logo} alt="Logo" style={{ width: "24px" }} />
         <h1 className="ml-4">realtime console</h1>
-        {/* Toggle Tool Panel Chevron */}
-        <button
-          onClick={() => setShowToolPanel((prev) => !prev)}
-          className="ml-auto p-2 border border-gray-300 rounded hover:bg-gray-100 focus:outline-none"
-          aria-label={showToolPanel ? "Hide Tool Panel" : "Show Tool Panel"}
-        >
-          {showToolPanel ? (
-            // When the panel is visible, show a chevron that points to the right.
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          ) : (
-            // When the panel is hidden, show a chevron that points to the left.
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          )}
-        </button>
+        <div className="ml-auto flex items-center gap-2">
+          <button
+            onClick={() => setEvents([])}
+            disabled={events.length === 0}
+            className={`p-2 border border-gray-300 rounded focus:outline-none ${
+              events.length === 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"
+            }`}
+          >
+            Clear Events
+          </button>
+          <button
+            onClick={() => setShowToolPanel((prev) => !prev)}
+            className="flex items-center gap-2 flex-nowrap p-2 border border-gray-300 rounded hover:bg-gray-100 focus:outline-none"
+            aria-label={showToolPanel ? "Hide Tool Panel" : "Show Tool Panel"}
+          >
+            <span>Tools/Functions</span>
+            {showToolPanel ? (
+              // When the panel is visible, show a chevron that points to the right.
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            ) : (
+              // When the panel is hidden, show a chevron that points to the left.
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            )}
+          </button>
+        </div>
       </nav>
 
       {/* Main Content */}
