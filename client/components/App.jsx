@@ -15,13 +15,36 @@ export default function App() {
 
   const currentAssistantConversationRef = useRef(null);
 
-  async function startSession() {
+  async function requestEphermalKey({dangerousApiKey, model, voice}) {
+    model = model || "gpt-4o-mini-realtime-preview";
+    voice = voice || "ash"; // alloy, ash, coral, echo, fable, onyx, nova, sage, or shimmer
+  
+    const r = await fetch("https://api.openai.com/v1/realtime/sessions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${dangerousApiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        voice,
+      }),
+    });
+  
+    return new Response(r.body, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });  
+  }
+
+  async function startSession(dangerousApiKey) {
     const model = "gpt-4o-mini-realtime-preview";
     const voice = "ash"; // alloy, ash, coral, echo, fable, onyx, nova, sage, or shimmer
 
-    // Get an ephemeral key from the Fastify server
-    const params = new URLSearchParams({ model, voice });
-    const tokenResponse = await fetch(`/token?${params.toString()}`);
+    // Get an ephemeral key directly from the OpenAI server
+    const tokenResponse = await requestEphermalKey({dangerousApiKey, model, voice});
     const data = await tokenResponse.json();
     const EPHEMERAL_KEY = data.client_secret.value;
 
@@ -329,7 +352,7 @@ export default function App() {
           <div className="flex-1 overflow-y-auto px-4">
             <EventLog events={events} />
           </div>
-          <div className="p-4">
+          <div className="px-4">
             <SessionControls
               startSession={startSession}
               stopSession={stopSession}
