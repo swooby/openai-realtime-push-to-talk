@@ -90,7 +90,7 @@ export default function App() {
       const data = JSON.stringify(message);
       console.log(`sendClientEvent("${data}")`);
       dataChannel.send(data);
-      setEvents((prev) => [message, ...prev]);
+      addMessage(message);
     } else {
       console.error(
         "Failed to send message - no data channel available",
@@ -182,7 +182,7 @@ export default function App() {
   useEffect(() => {
     if (dataChannel) {
       // Append new server events to the list
-      dataChannel.addEventListener("message", handleMessage);
+      dataChannel.addEventListener("message", handleServerMessage);
 
       // Set session active when the data channel is opened
       dataChannel.addEventListener("open", () => {
@@ -198,27 +198,37 @@ export default function App() {
     }
   }, [dataChannel]);
 
-  function handleMessage(e) {
-    const event = JSON.parse(e.data);
-    switch (event.type) {
+  function addMessage(message) {
+    message.timestamp = new Date();
+    // This is simple and "works", but this is not very efficient for large collections.
+    // This "insert at head" involves copying the entire array each time.
+    // One option is to insert at the end (which requires no array copy),
+    // and then have EventLog reverse the order of the events when rendering.
+    // Another option is to use a virtualized list library like react-window or react-virtualized.
+    setEvents((prev) => [message, ...prev]);
+  }
+
+  function handleServerMessage(message) {
+    message = JSON.parse(message.data);
+    switch (message.type) {
       case "error":
-        console.error("error:", event);
+        console.error("error:", message);
         break;
       default:
         if (false) {
-          console.log(`message:`, event);
+          console.log(`message:`, message);
         }
         break;
     }
 
-    switch (event.type) {
+    switch (message.type) {
       case "response.output_item.added": {
-        const item = event.item;
+        const item = message.item;
         if (item.role === "assistant") {
           let currentAssistantConversation = currentAssistantConversationRef.current;
           if (item.id !== currentAssistantConversation?.item.id) {
             currentAssistantConversation = {
-              responseId: event.response_id,
+              responseId: message.response_id,
               item,
               startTime: new Date(),
             };
@@ -229,7 +239,7 @@ export default function App() {
         break;
       }
       case "response.output_item.done": {
-        const item = event.item;
+        const item = message.item;
         if (item.role === "assistant") {
           const currentAssistantConversation = currentAssistantConversationRef.current;
           if (item.id === currentAssistantConversation?.item.id) {
@@ -238,14 +248,9 @@ export default function App() {
           }
         }
       }
-    }  
-    
-    // This is simple and "works", but this is not very efficient for large collections.
-    // This "insert at head" involves copying the entire array each time.
-    // One option is to insert at the end (which requires no array copy),
-    // and then have EventLog reverse the order of the events when rendering.
-    // Another option is to use a virtualized list library like react-window or react-virtualized.
-    setEvents((prev) => [event, ...prev]);
+    }
+
+    addMessage(message);
   }
 
   useEffect(() => {

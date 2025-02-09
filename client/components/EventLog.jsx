@@ -14,6 +14,7 @@ function Event({ event, timestamp }) {
         className="flex items-center gap-2 cursor-pointer"
         onClick={() => setIsExpanded(!isExpanded)}
       >
+        {timestamp} |
         {isClient ? (
           <ArrowUp className="text-green-400" />
         ) : (
@@ -21,7 +22,7 @@ function Event({ event, timestamp }) {
         )}
         <div className="text-sm text-gray-500">
           {isClient ? "client:" : "server:"}
-          &nbsp;{event.type} | {timestamp}
+          &nbsp;{event.type}
         </div>
       </div>
       <div
@@ -53,7 +54,13 @@ export default function EventLog({ events }) {
       <Event
         key={event.event_id}
         event={event}
-        timestamp={new Date().toLocaleTimeString()}
+        timestamp={event.timestamp.toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          fractionalSecondDigits: 3,
+          hour12: false,
+        })}
       />,
     );
   });
