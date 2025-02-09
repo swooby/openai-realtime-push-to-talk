@@ -79,7 +79,7 @@ export default function App() {
 
     setIsSessionActive(false);
     setDataChannel(null);
-    updateCurrentAssistantConversation(null);
+    currentAssistantConversationRef.current = null;
     peerConnection.current = null;
   }
 
@@ -125,6 +125,7 @@ export default function App() {
 
   // Send a text message to the model
   function sendTextMessage(message) {
+    interruptAssistant();
     const event = {
       type: "conversation.item.create",
       item: {
@@ -162,15 +163,15 @@ export default function App() {
   }
 
   function interruptAssistant() {
-    sendResponseCancel();
     const currentAssistantConversation = currentAssistantConversationRef.current; 
     if (currentAssistantConversation) {
+      sendResponseCancel(currentAssistantConversation.responseId);
       const elapsedMillis = Date.now() - currentAssistantConversation.startTime;
       const item = currentAssistantConversation.item;
       const event = {
         type: "conversation.item.truncate",
         item_id: item.id,
-        content_index: 0, // TODO: content.length,
+        content_index: 0, // TODO: calculate content.length from list of delta items
         audio_end_ms: elapsedMillis,
       };
       sendClientEvent(event);
@@ -217,6 +218,7 @@ export default function App() {
           let currentAssistantConversation = currentAssistantConversationRef.current;
           if (item.id !== currentAssistantConversation?.item.id) {
             currentAssistantConversation = {
+              responseId: event.response_id,
               item,
               startTime: new Date(),
             };
