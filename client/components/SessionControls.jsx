@@ -41,7 +41,7 @@ function SessionStopped({ startSession }) {
         />
         <Button
           onClick={handleStartSession}
-          className={`whitespace-nowrap ${isActivating ? "bg-gray-600" : "bg-red-600"}`}
+          className={`px-8 whitespace-nowrap ${isActivating ? "bg-gray-600" : "bg-red-600"}`}
           icon={<CloudLightning height={16} />}
         >
           {isActivating ? "Starting session..." : "Start session"}

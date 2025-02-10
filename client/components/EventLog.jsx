@@ -9,24 +9,24 @@ function Event({ event, timestamp }) {
   const isError = event.error || event.error_message;
 
   return (
-    <div className={`flex flex-col gap-2 p-2 rounded-md ${isError ? "bg-yellow-100" : "bg-gray-50"}`}>
+    <div className={`flex flex-col gap-2 p-2 rounded-md border border-gray-300 ${isError ? "bg-yellow-100" : ""}`}>
       <div
-        className="flex items-center gap-2 cursor-pointer"
+        className="flex items-center gap-2 cursor-pointer text-sm"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        {timestamp} |
-        {isClient ? (
-          <ArrowUp className="text-green-400" />
-        ) : (
-          <ArrowDown className="text-blue-400" />
-        )}
-        <div className="text-sm text-gray-500">
+        <div>
+          {timestamp}&nbsp;|&nbsp;
+          {isClient ? (
+            <span className="text-green-400">⇧</span>
+          ) : (
+            <span className="text-blue-400">⇩</span>
+          )}&nbsp;
           {isClient ? "client:" : "server:"}
           &nbsp;{event.type}
         </div>
       </div>
       <div
-        className={`text-gray-500 bg-gray-200 p-2 rounded-md overflow-x-auto ${
+        className={`p-2 rounded-md overflow-x-auto ${
           isExpanded ? "block" : "hidden"
         }`}
       >
@@ -66,9 +66,9 @@ export default function EventLog({ events }) {
   });
 
   return (
-    <div className="flex flex-col gap-2 overflow-x-auto">
+    <div className="flex flex-col gap-2 overflow-x-auto py-4">
       {events.length === 0 ? (
-        <div className="text-gray-500">Awaiting events...</div>
+        <div className="">Awaiting events...</div>
       ) : (
         eventsToDisplay
       )}

@@ -46,7 +46,7 @@ function FunctionCallOutput({ functionCallOutput }) {
       className="w-full h-16 rounded-md flex items-center justify-center border border-gray-200"
       style={{ backgroundColor: color }}
     >
-      <p className="text-sm font-bold text-black bg-slate-100 rounded-md p-2 border border-black">
+      <p className="text-sm font-bold text-black rounded-md p-2 border border-black">
         {color}
       </p>
     </div>
@@ -56,7 +56,7 @@ function FunctionCallOutput({ functionCallOutput }) {
     <div className="flex flex-col gap-2">
       <p>Theme: {theme}</p>
       {colorBoxes}
-      <pre className="text-xs bg-gray-100 rounded-md p-2 overflow-x-auto">
+      <pre className="text-xs rounded-md p-2 overflow-x-auto">
         {JSON.stringify(functionCallOutput, null, 2)}
       </pre>
     </div>
@@ -114,7 +114,7 @@ export default function ToolPanel({
 
   return (
     <section className="h-full w-full flex flex-col gap-4">
-      <div className="h-full bg-gray-50 rounded-md p-4">
+      <div className="h-full rounded-md p-4">
         <h2 className="text-lg font-bold">Color Palette Tool</h2>
         {isSessionActive ? (
           functionCallOutput ? (

@@ -5,12 +5,18 @@ https://tailwindcss.com/docs/preflight
 @import 'tailwindcss';
 
 /*
+  Automatically added by the `npx @tailwindcss/upgrade@next` tool documented at:
+  https://tailwindcss.com/docs/upgrade-guide
+
   The default border color has changed to `currentColor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
   looks the same as it did with Tailwind CSS v3.
 
   If we ever want to remove these styles, we need to add an explicit border
   color utility to any element that depends on these defaults.
+
+  For more info see:
+  https://tailwindcss.com/docs/upgrade-guide#default-border-color
 */
 @layer base {
   *,
@@ -22,11 +28,48 @@ https://tailwindcss.com/docs/preflight
   }
 }
 
+/* Base theme: Light mode (default) */
 :root {
-  --color-base: #efefef;
-  --color-highlight: #ff80ff;
+  /* Background and text */
+  --background: #ffffff;
+  --foreground: #1f2937; /* dark slate (for body text) */
+
+  /* Primary and secondary action colors */
+  --primary: #3b82f6;    /* blue */
+  --primary-hover: #2563eb; /* A darker blue for hover states */
+  --secondary: #10b981;  /* green */
+
+  /* Accent / highlight colors */
+  --accent: #f59e0b;     /* amber */
+
+  /* Supporting colors */
+  --muted: #6b7280;      /* medium gray for secondary text */
+  --border: #d1d5db;     /* light gray borders */
+
+  /* Card styles (if used) */
+  --card-background: #f3f4f6;
+  --card-foreground: #1f2937;
 }
 
+/* Dark mode overrides – add the "dark" class to an ancestor (for example, the body) */
+.dark {
+  --background: #1f2937;
+  --foreground: #f9fafb; /* nearly white text */
+
+  --primary: #3b82f6;    /* keeping the primary blue the same works well */
+  --primary-hover: #2563eb;
+  --secondary: #10b981;  /* and secondary green, too */
+
+  --accent: #f59e0b;
+
+  --muted: #9ca3af;      /* slightly lighter gray for muted text */
+  --border: #374151;     /* a darker border for separation */
+
+  --card-background: #111827;
+  --card-foreground: #f9fafb;
+}
+
+/* Apply the theme colors to the base elements */
 html,
 body {
   height: 100%;
@@ -36,5 +79,22 @@ body {
   overflow: hidden;
   font-family: "Consolas", "Andale Mono", monospace;
   font-size: 0.9rem;
-  background-color: var(--color-base);
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+button {
+  background-color: var(--primary);
+  color: #ffffff; /* Use white text for high contrast on blue */
+  border: 1px solid transparent;
+  border-radius: 0.375rem; /* Example: rounded corners */
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+}
+
+button:hover,
+button:focus {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  outline: none;
 }
