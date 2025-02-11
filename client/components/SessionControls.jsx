@@ -4,13 +4,27 @@ import Button from "./Button";
 
 function SessionStopped({ startSession }) {
   const [isActivating, setIsActivating] = useState(false);
+  /**
+   * This is a dangerous API key that the user should keep secret.
+   * It is only ever used to directly request a one-minute ephemeral key from api.openai.com.
+   * It is otherwise never logged, stored, or sent anywhere else.
+   */
   const [dangerousApiKey, setDangerousApiKey] = useState("");
   const [showMore, setShowMore] = useState(false);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   function handleStartSession() {
     if (isActivating) return;
     if (!dangerousApiKey) {
       alert("Please enter your OpenAI API Key.");
+      setShowMore(true);
+      inputRef.current.focus();
       return;
     }
     setIsActivating(true);
@@ -32,6 +46,7 @@ function SessionStopped({ startSession }) {
           </a>
         </label>
         <input
+          ref={inputRef}
           id="openai-api-key"
           type="password"
           placeholder="!!KEEP YOUR OPEN AI API KEY SECRET!!"
@@ -50,7 +65,7 @@ function SessionStopped({ startSession }) {
       {showMore && (
         <div className="">
           <b>You must provide <i>your own</i> OpenAI API Key to connect to OpenAI's Realtime API with.</b><br/>
-          This <a href="https://github.com/swooby/openai-realtime-push-to-talk/blob/main/client/components/App.jsx#L18-L40" target="_blank" rel="noopener noreferrer" className="underline">[open source]</a> app <b>only ever sends this value directly to https://api.openai.com</b>.<br/>
+          This <a href="https://github.com/swooby/openai-realtime-push-to-talk/blob/30ef22ad9ae6a0bb4b0d0893e96629dcfba2a4d1/client/components/App.jsx#L33-L78" target="_blank" rel="noopener noreferrer" className="underline">[open source]</a> app <b>only ever sends this value directly to https://api.openai.com</b>.<br/>
           If you don't already have an OpenAI API key:
           <ol className="list-decimal list-inside ml-4">
             <li>

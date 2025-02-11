@@ -1,9 +1,12 @@
 {
   "name": "openai-realtime-push-to-talk",
-  "homepage": "https://swooby.github.io/openai-realtime-push-to-talk",
-  "private": true,
-  "version": "0.0.2",
+  "version": "0.0.3",
+  "timestamp": "2022-02-10 22:01",
+  "homepage": "https://github.com/swooby/openai-realtime-push-to-talk",
+  "repository": "github:/openai-realtime-push-to-talk",  
+  "title": "OpenAI Realtime Push-to-Talk",
   "type": "module",
+  "private": true,
   "scripts": {
     "dev": "vite",
     "build": "vite build",
