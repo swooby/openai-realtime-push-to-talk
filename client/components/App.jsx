@@ -111,6 +111,13 @@ export default function App() {
     if (dataChannel) {
       dataChannel.close();
     }
+
+    peerConnection.current.getSenders().forEach((sender) => {
+      if (sender.track) {
+        sender.track.stop();
+      }
+    });
+    
     if (peerConnection.current) {
       peerConnection.current.close();
     }
