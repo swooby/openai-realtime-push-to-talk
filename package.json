@@ -2,7 +2,7 @@
   "name": "openai-realtime-push-to-talk",
   "homepage": "https://swooby.github.io/openai-realtime-push-to-talk",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
